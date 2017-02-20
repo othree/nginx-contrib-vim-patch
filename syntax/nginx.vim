@@ -286,7 +286,7 @@ syn keyword ngxDirective post_acceptex
 syn keyword ngxDirective postpone_gzipping
 syn keyword ngxDirective postpone_output
 syn keyword ngxDirective protocol nextgroup=ngxMailProtocol skipwhite
-syn keyword ngxMailProtocol imap pop3 smtp
+syn keyword ngxMailProtocol imap pop3 smtp contained
 syn keyword ngxDirective proxy
 syn keyword ngxDirective proxy_bind
 syn keyword ngxDirective proxy_buffer
@@ -445,7 +445,7 @@ syn keyword ngxDirective ssl_engine
 syn keyword ngxDirective ssl_password_file
 syn keyword ngxDirective ssl_prefer_server_ciphers
 syn keyword ngxDirective ssl_protocols nextgroup=ngxSSLProtocol skipwhite
-syn keyword ngxSSLProtocol SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 nextgroup=ngxSSLProtocol skipwhite
+syn keyword ngxSSLProtocol SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 contained nextgroup=ngxSSLProtocol skipwhite
 syn keyword ngxDirective ssl_session_cache
 syn keyword ngxDirective ssl_session_ticket_key
 syn keyword ngxDirective ssl_session_tickets
