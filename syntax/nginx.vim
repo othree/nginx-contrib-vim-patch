@@ -37,7 +37,8 @@ syn keyword ngxDirectiveImportant include
 syn keyword ngxDirectiveImportant root
 syn keyword ngxDirectiveImportant server
 syn keyword ngxDirectiveImportant server_name
-syn keyword ngxDirectiveImportant listen
+syn keyword ngxDirectiveImportant listen contained
+syn region  ngxDirectiveImportantListen matchgroup=ngxDirectiveImportant start=/listen/ end=/;\zs/ contains=ngxListenOptions 
 syn keyword ngxDirectiveImportant internal
 syn keyword ngxDirectiveImportant proxy_pass
 syn keyword ngxDirectiveImportant memcached_pass
@@ -45,6 +46,23 @@ syn keyword ngxDirectiveImportant fastcgi_pass
 syn keyword ngxDirectiveImportant scgi_pass
 syn keyword ngxDirectiveImportant uwsgi_pass
 syn keyword ngxDirectiveImportant try_files
+
+syn keyword ngxListenOptions ssl
+syn keyword ngxListenOptions http2
+syn keyword ngxListenOptions spdy
+syn keyword ngxListenOptions proxy_protocol
+syn keyword ngxListenOptions setfib
+syn keyword ngxListenOptions fastopen
+syn keyword ngxListenOptions backlog
+syn keyword ngxListenOptions rcvbuf
+syn keyword ngxListenOptions sndbuf
+syn keyword ngxListenOptions accept_filter
+syn keyword ngxListenOptions deferred
+syn keyword ngxListenOptions bind
+syn keyword ngxListenOptions ipv6only
+syn keyword ngxListenOptions reuseport
+syn keyword ngxListenOptions so_keepalive
+syn keyword ngxListenOptions keepidle
 
 syn keyword ngxDirectiveControl break
 syn keyword ngxDirectiveControl return
@@ -832,5 +850,7 @@ hi link ngxDirectiveError Constant
 hi link ngxDirectiveDeprecated Error
 hi link ngxDirective Identifier
 hi link ngxDirectiveThirdParty Special
+
+hi link ngxListenOptions Keyword
 
 let b:current_syntax = "nginx"
