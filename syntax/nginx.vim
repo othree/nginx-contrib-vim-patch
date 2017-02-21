@@ -38,7 +38,7 @@ syn keyword ngxDirectiveImportant root
 syn keyword ngxDirectiveImportant server
 syn keyword ngxDirectiveImportant server_name
 syn keyword ngxDirectiveImportant listen contained
-syn region  ngxDirectiveImportantListen matchgroup=ngxDirectiveImportant start=/listen/ end=/;\zs/ contains=ngxListenOptions 
+syn region  ngxDirectiveImportantListen matchgroup=ngxDirectiveImportant start=/listen/ skip=/\\\;/ end=/;\zs/ contains=ngxListenOptions,ngxString
 syn keyword ngxDirectiveImportant internal
 syn keyword ngxDirectiveImportant proxy_pass
 syn keyword ngxDirectiveImportant memcached_pass
@@ -47,6 +47,7 @@ syn keyword ngxDirectiveImportant scgi_pass
 syn keyword ngxDirectiveImportant uwsgi_pass
 syn keyword ngxDirectiveImportant try_files
 
+syn keyword ngxListenOptions default_server contained
 syn keyword ngxListenOptions ssl            contained
 syn keyword ngxListenOptions http2          contained    
 syn keyword ngxListenOptions spdy           contained
