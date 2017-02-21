@@ -49,7 +49,7 @@ syn keyword ngxDirectiveImportant try_files
 
 syn keyword ngxListenOptions default_server contained
 syn keyword ngxListenOptions ssl            contained
-syn keyword ngxListenOptions http2          contained    
+syn keyword ngxListenOptions http2          contained
 syn keyword ngxListenOptions spdy           contained
 syn keyword ngxListenOptions proxy_protocol contained
 syn keyword ngxListenOptions setfib         contained
