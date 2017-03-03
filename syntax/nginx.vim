@@ -84,7 +84,7 @@ syn keyword ngxRewriteFlag permanent contained
 syn keyword ngxDirectiveError error_page nextgroup=ngxErrorStatusCode skipwhite skipempty
 syn keyword ngxDirectiveError post_action
 
-syn match ngxErrorStatusCode /\d\d\d/ contained contains=ngxStatusCode nextgroup=ngxErrorResponseCode skipwhite skipempty
+syn match ngxErrorStatusCode   /\d\d\d/  contained contains=ngxStatusCode nextgroup=ngxErrorResponseCode skipwhite skipempty
 syn match ngxErrorResponseCode /=\d\d\d/ contained contains=ngxStatusCode
 
 syn keyword ngxDirectiveDeprecated connections
