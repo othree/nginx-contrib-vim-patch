@@ -70,8 +70,10 @@ syn keyword ngxDirectiveControl return
 syn keyword ngxDirectiveControl rewrite nextgroup=ngxRewriteURI skipwhite skipempty
 syn keyword ngxDirectiveControl set
 
-syn match ngxRewriteURI  /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewritedURI skipwhite skipempty
-syn match ngxRewritedURI /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewriteFlag skipwhite skipempty
+syn match  ngxRewriteURI   /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewritedURI skipwhite skipempty
+syn region ngxRewriteURI   start=+[^:a-zA-Z>!\\@]\z(["']\)+lc=1 end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString nextgroup=ngxRewritedURI skipwhite skipempty
+syn match  ngxRewritedURI  /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewriteFlag skipwhite skipempty
+syn region ngxRewritedURI  start=+[^:a-zA-Z>!\\@]\z(["']\)+lc=1 end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString nextgroup=ngxRewriteFlag skipwhite skipempty
 
 syn keyword ngxRewriteFlag last      contained
 syn keyword ngxRewriteFlag break     contained
