@@ -67,8 +67,16 @@ syn keyword ngxListenOptions keepidle       contained
 
 syn keyword ngxDirectiveControl break
 syn keyword ngxDirectiveControl return
-syn keyword ngxDirectiveControl rewrite
+syn keyword ngxDirectiveControl rewrite nextgroup=ngxRewriteURI skipwhite skipempty
 syn keyword ngxDirectiveControl set
+
+syn match ngxRewriteURI  /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewritedURI skipwhite skipempty
+syn match ngxRewritedURI /\S\+/ contained contains=ngxVariableString nextgroup=ngxRewriteFlag skipwhite skipempty
+
+syn keyword ngxRewriteFlag last      contained
+syn keyword ngxRewriteFlag break     contained
+syn keyword ngxRewriteFlag redirect  contained
+syn keyword ngxRewriteFlag permanent contained
 
 syn keyword ngxDirectiveError error_page
 syn keyword ngxDirectiveError post_action
@@ -2129,6 +2137,7 @@ hi link ngxBlock Normal
 hi link ngxString String
 
 hi link ngxBoolean Boolean
+hi link ngxRewriteFlag Boolean
 hi link ngxDirectiveBlock Statement
 hi link ngxDirectiveImportant Type
 hi link ngxDirectiveControl Keyword
