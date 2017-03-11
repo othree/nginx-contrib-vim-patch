@@ -9,33 +9,56 @@ setlocal iskeyword+=.
 setlocal iskeyword+=/
 setlocal iskeyword+=:
 
-syn match ngxVariable '\$\(\w\+\|{\w\+}\)'
-syn match ngxVariableBlock '\$\(\w\+\|{\w\+}\)' contained
-syn match ngxVariableString '\$\(\w\+\|{\w\+}\)' contained
-syn region ngxBlock start=+^+ end=+{+ skip=+\${+ contains=ngxComment,ngxDirectiveBlock,ngxVariableBlock,ngxString oneline
-syn region ngxString start=+[^:a-zA-Z>!\\@]\z(["']\)+lc=1 end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString
-syn match ngxComment ' *#.*$'
+syn match   ngxVariable       '\$\(\w\+\|{\w\+}\)'
+syn match   ngxVariableString '\$\(\w\+\|{\w\+}\)' contained
+
+syn region  ngxString  start=+\%(^\|\s\)\zs\z(["']\)+ end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString
+syn region  ngxComment start=+\%(^\|\s\)\zs#+ end=+$+ oneline
 
 syn keyword ngxBoolean on
 syn keyword ngxBoolean off
 
-syn keyword ngxDirectiveBlock http         contained
-syn keyword ngxDirectiveBlock mail         contained
-syn keyword ngxDirectiveBlock events       contained
-syn keyword ngxDirectiveBlock server       contained
-syn keyword ngxDirectiveBlock types        contained
-syn keyword ngxDirectiveBlock location     contained
-syn keyword ngxDirectiveBlock upstream     contained
-syn keyword ngxDirectiveBlock charset_map  contained
-syn keyword ngxDirectiveBlock limit_except contained
-syn keyword ngxDirectiveBlock if           contained
-syn keyword ngxDirectiveBlock geo          contained
-syn keyword ngxDirectiveBlock map          contained
-syn keyword ngxDirectiveBlock split_clients contained
+syn match   ngxDirectiveBlockParams /\S\+/ contains=ngxVariableString contained nextgroup=ngxDirectiveBlockParams,ngxBlock skipwhite skipempty
+syn match   ngxDirectiveBlockParam1 /\S\+/ contains=ngxVariableString contained nextgroup=ngxDirectiveBlockParam2 skipwhite skipempty
+syn match   ngxDirectiveBlockParam2 /\S\+/ contains=ngxVariableString contained nextgroup=ngxBlock skipwhite skipempty
+syn region  ngxDirectiveBlockParams start=+\%(^\|\s\)\zs\z(["']\)+ end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString contained nextgroup=ngxDirectiveBlockParams,ngxBlock skipwhite skipempty
+syn region  ngxDirectiveBlockParam1 start=+\%(^\|\s\)\zs\z(["']\)+ end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString contained nextgroup=ngxDirectiveBlockParam2 skipwhite skipempty
+syn region  ngxDirectiveBlockParam2 start=+\%(^\|\s\)\zs\z(["']\)+ end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString contained nextgroup=ngxBlock skipwhite skipempty
+
+syn cluster ngxDirectives      contains=ngxDirectiveBlock,ngxDirectiveImportant,ngxDirectiveControl,ngxDirectiveError,ngxDirectiveDeprecated,ngxDirective,ngxDirectiveThirdParty
+syn cluster ngxBlockDirectives contains=@ngxDirectives,ngxReservedMainContextDirective
+syn cluster ngxBlockElements   contains=@ngxBlockDirectives,ngxVariable,ngxString,ngxComment,ngxBoolean
+
+syn region  ngxBlock         start=+{+ end=+}+ contained contains=@ngxBlockElements
+syn region  ngxServerBlock   start=+{+ end=+}+ contained contains=@ngxBlockElements,ngxReservedServerContextDirective
+syn region  ngxUpstreamBlock start=+{+ end=+}+ contained contains=@ngxBlockElements,ngxDirectiveServer
+
+syn keyword ngxDirectiveBlock http          nextgroup=ngxBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock mail          nextgroup=ngxBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock events        nextgroup=ngxBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock server        nextgroup=ngxServerBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock types         nextgroup=ngxBlock skipwhite skipempty
+
+syn match   ngxLocationPath     /\S\+/ contained nextgroup=ngxBlock skipwhite skipempty
+syn region  ngxLocationPath     start=+\%(^\|\s\)\zs\z(["']\)+lc=1 end=+\z1+ skip=+\\\\\|\\\z1+ contains=ngxVariableString contained nextgroup=ngxBlock skipwhite skipempty
+syn match   ngxLocationOperator /\(=\|\~\*\|\^\~\|\~\)/ contained nextgroup=ngxLocationPath skipwhite skipempty
+syn match   ngxLocationNamedLoc /@\w\+/
+syn keyword ngxDirectiveBlock location      nextgroup=ngxLocationNamedLoc,ngxLocationOperator,ngxLocationPath,ngxString skipwhite skipempty
+
+syn keyword ngxDirectiveBlock upstream      nextgroup=ngxUpstreamBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock charset_map   nextgroup=ngxDirectiveBlockParam1 skipwhite skipempty
+syn keyword ngxDirectiveBlock limit_except  nextgroup=ngxDirectiveBlockParams skipwhite skipempty
+syn keyword ngxDirectiveBlock if            nextgroup=ngxBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock geo           nextgroup=ngxBlock skipwhite skipempty
+syn keyword ngxDirectiveBlock map           nextgroup=ngxDirectiveBlockParam1 skipwhite skipempty
+syn keyword ngxDirectiveBlock split_clients nextgroup=ngxDirectiveBlockParam1 skipwhite skipempty
+
+syn keyword ngxReservedMainContextDirective   http contained
+syn keyword ngxReservedServerContextDirective server contained
 
 syn keyword ngxDirectiveImportant include
 syn keyword ngxDirectiveImportant root
-syn keyword ngxDirectiveImportant server
+syn keyword ngxDirectiveServer    server contained
 syn keyword ngxDirectiveImportant server_name
 syn keyword ngxDirectiveImportant listen contained
 syn region  ngxDirectiveImportantListen matchgroup=ngxDirectiveImportant start=+listen+ skip=+\\\\\|\\\;+ end=+;+he=e-1 contains=ngxListenOptions,ngxString
@@ -333,7 +356,7 @@ syn keyword ngxDirective postpone_gzipping
 syn keyword ngxDirective postpone_output
 syn keyword ngxDirective preread_buffer_size
 syn keyword ngxDirective preread_timeout
-syn keyword ngxDirective protocol nextgroup=ngxMailProtocol skipwhite skipempty
+syn keyword ngxDirective protocol nextgroup=ngxMailProtocol skipwhite
 syn keyword ngxMailProtocol imap pop3 smtp contained
 syn keyword ngxDirective proxy
 syn keyword ngxDirective proxy_bind
@@ -396,7 +419,7 @@ syn keyword ngxDirective proxy_ssl_ciphers
 syn keyword ngxDirective proxy_ssl_crl
 syn keyword ngxDirective proxy_ssl_name
 syn keyword ngxDirective proxy_ssl_password_file
-syn keyword ngxDirective proxy_ssl_protocols nextgroup=ngxSSLProtocol skipwhite skipempty
+syn keyword ngxDirective proxy_ssl_protocols nextgroup=ngxSSLProtocol skipwhite
 syn keyword ngxDirective proxy_ssl_server_name
 syn keyword ngxDirective proxy_ssl_session_reuse
 syn keyword ngxDirective proxy_ssl_trusted_certificate
@@ -518,8 +541,8 @@ syn keyword ngxDirective ssl_handshake_timeout
 syn keyword ngxDirective ssl_password_file
 syn keyword ngxDirective ssl_prefer_server_ciphers
 syn keyword ngxDirective ssl_preread
-syn keyword ngxDirective ssl_protocols nextgroup=ngxSSLProtocol skipwhite skipempty
-syn keyword ngxSSLProtocol SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 contained nextgroup=ngxSSLProtocol skipwhite skipempty
+syn keyword ngxDirective ssl_protocols nextgroup=ngxSSLProtocol skipwhite
+syn keyword ngxSSLProtocol SSLv2 SSLv3 TLSv1 TLSv1.1 TLSv1.2 contained nextgroup=ngxSSLProtocol skipwhite
 syn keyword ngxDirective ssl_session_cache
 syn keyword ngxDirective ssl_session_ticket_key
 syn keyword ngxDirective ssl_session_tickets
@@ -610,7 +633,7 @@ syn keyword ngxDirective uwsgi_ssl_ciphers
 syn keyword ngxDirective uwsgi_ssl_crl
 syn keyword ngxDirective uwsgi_ssl_name
 syn keyword ngxDirective uwsgi_ssl_password_file
-syn keyword ngxDirective uwsgi_ssl_protocols nextgroup=ngxSSLProtocol skipwhite skipempty
+syn keyword ngxDirective uwsgi_ssl_protocols nextgroup=ngxSSLProtocol skipwhite
 syn keyword ngxDirective uwsgi_ssl_server_name
 syn keyword ngxDirective uwsgi_ssl_session_reuse
 syn keyword ngxDirective uwsgi_ssl_trusted_certificate
@@ -2123,14 +2146,16 @@ syn keyword ngxDirectiveThirdParty xss_input_types
 
 hi link ngxComment Comment
 hi link ngxVariable Identifier
-hi link ngxVariableBlock Identifier
 hi link ngxVariableString PreProc
-hi link ngxBlock Normal
 hi link ngxString String
+hi link ngxLocationOperator Operator
+hi link ngxLocationPath String
+hi link ngxLocationNamedLoc Identifier
 
 hi link ngxBoolean Boolean
 hi link ngxDirectiveBlock Statement
 hi link ngxDirectiveImportant Type
+hi link ngxDirectiveServer ngxDirectiveImportant
 hi link ngxDirectiveControl Keyword
 hi link ngxDirectiveError Constant
 hi link ngxDirectiveDeprecated Error
